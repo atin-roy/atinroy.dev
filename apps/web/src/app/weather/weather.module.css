@@ -1,0 +1,238 @@
+/* =========================================================
+   WEATHER DESIGN SYSTEM
+   Source of truth: Figma → Design System pages
+   Scope: ONLY the /weather app via CSS Modules + layout import
+   ========================================================= */
+
+/* =========================================================
+   1. WEATHER SANDBOX / RESET
+   ---------------------------------------------------------
+   Why:
+   - We do NOT touch global html/body
+   - Weather app lives inside its own isolated wrapper
+   - Prevents styles leaking in or out
+   ========================================================= */
+
+.weatherWrapper,
+.weatherWrapper *,
+.weatherWrapper *::before,
+.weatherWrapper *::after {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+.weatherWrapper {
+    min-height: 100vh; /* replaces html, body { height: 100% } */
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+
+    /* Fallback font; real fonts come from next/font variables */
+    font-family: system-ui, -apple-system, sans-serif;
+
+    /* Creates a new stacking & isolation context */
+    isolation: isolate;
+}
+
+/* Media defaults scoped to weather */
+.weatherWrapper img,
+.weatherWrapper picture,
+.weatherWrapper video,
+.weatherWrapper canvas,
+.weatherWrapper svg {
+    display: block;
+    max-width: 100%;
+}
+
+/* Form elements inherit typography */
+.weatherWrapper input,
+.weatherWrapper button,
+.weatherWrapper textarea,
+.weatherWrapper select {
+    font: inherit;
+}
+
+/* Prevent long text from breaking layouts */
+.weatherWrapper p,
+.weatherWrapper h1,
+.weatherWrapper h2,
+.weatherWrapper h3,
+.weatherWrapper h4,
+.weatherWrapper h5,
+.weatherWrapper h6 {
+    overflow-wrap: break-word;
+}
+
+/* =========================================================
+   2. DESIGN TOKENS (GLOBAL, WEATHER-ONLY)
+   ---------------------------------------------------------
+   Why :global(:root)?
+   - CSS Modules scope everything by default
+   - Tokens must be accessible anywhere in the subtree
+   - Imported ONLY by weather/layout.tsx
+   ========================================================= */
+
+:global(:root) {
+    /* -------------------------
+     COLOR TOKENS (Figma: Color)
+     ------------------------- */
+
+    --weather-neutral-900: #02012c;
+    --weather-neutral-800: #262540;
+    --weather-neutral-700: #302f4a;
+    --weather-neutral-600: #3c3b5e;
+    --weather-neutral-300: #acabb7;
+    --weather-neutral-200: #d4d3d9;
+    --weather-neutral-0: #ffffff;
+
+    --weather-orange-500: #ff820a;
+
+    --weather-blue-500: #4658d9;
+    --weather-blue-700: #2b1b9c;
+
+    /* -------------------------
+     FONT FAMILIES
+     (Provided by next/font in layout.tsx)
+     ------------------------- */
+
+    --weather-font-body: var(--font-dm-sans);
+    --weather-font-heading: var(--font-bricolage);
+
+    /* -------------------------
+     TYPOGRAPHY TOKENS
+     (Figma: Typography)
+     ------------------------- */
+
+    /* Preset 1 */
+    --weather-text-1-size: 96px;
+    --weather-text-1-line: 1;
+    --weather-text-1-spacing: -2px;
+    --weather-text-1-weight: 600;
+    --weather-text-1-font: var(--weather-font-body);
+
+    /* Preset 2 */
+    --weather-text-2-size: 52px;
+    --weather-text-2-line: 1.2;
+    --weather-text-2-weight: 700;
+    --weather-text-2-font: var(--weather-font-heading);
+
+    /* Preset 3 */
+    --weather-text-3-size: 32px;
+    --weather-text-3-line: 1;
+    --weather-text-3-weight: 300;
+    --weather-text-3-font: var(--weather-font-body);
+
+    /* Preset 4 */
+    --weather-text-4-size: 28px;
+    --weather-text-4-line: 1.2;
+    --weather-text-4-weight: 700;
+    --weather-text-4-font: var(--weather-font-body);
+
+    /* Presets 5–8 (DM Sans Medium) */
+    --weather-text-5-size: 20px;
+    --weather-text-6-size: 18px;
+    --weather-text-7-size: 16px;
+    --weather-text-8-size: 14px;
+
+    --weather-text-body-line: 1.2;
+    --weather-text-body-weight: 500;
+    --weather-text-body-font: var(--weather-font-body);
+
+    /* -------------------------
+     SPACING TOKENS
+     (Figma: Spacing)
+     ------------------------- */
+
+    --weather-space-0: 0px;
+    --weather-space-025: 2px;
+    --weather-space-050: 4px;
+    --weather-space-075: 6px;
+    --weather-space-100: 8px;
+    --weather-space-125: 10px;
+    --weather-space-150: 12px;
+    --weather-space-200: 16px;
+    --weather-space-250: 20px;
+    --weather-space-300: 24px;
+    --weather-space-400: 32px;
+    --weather-space-500: 40px;
+    --weather-space-600: 48px;
+    --weather-space-800: 64px;
+    --weather-space-1000: 80px;
+    --weather-space-1200: 96px;
+    --weather-space-1400: 112px;
+    --weather-space-1600: 128px;
+    --weather-space-1800: 140px;
+
+    /* -------------------------
+     RADIUS TOKENS
+     (Figma: Radius)
+     ------------------------- */
+
+    --weather-radius-0: 0px;
+    --weather-radius-4: 4px;
+    --weather-radius-6: 6px;
+    --weather-radius-8: 8px;
+    --weather-radius-10: 10px;
+    --weather-radius-12: 12px;
+    --weather-radius-16: 16px;
+    --weather-radius-20: 20px;
+    --weather-radius-24: 24px;
+    --weather-radius-full: 999px;
+}
+
+/* =========================================================
+   3. TYPOGRAPHY PRESETS (UTILITIES)
+   ---------------------------------------------------------
+   These consume tokens.
+   Components consume THESE.
+   ========================================================= */
+
+.textPreset1 {
+    font-family: var(--weather-text-1-font);
+    font-size: var(--weather-text-1-size);
+    line-height: var(--weather-text-1-line);
+    letter-spacing: var(--weather-text-1-spacing);
+    font-weight: var(--weather-text-1-weight);
+}
+
+.textPreset2 {
+    font-family: var(--weather-text-2-font);
+    font-size: var(--weather-text-2-size);
+    line-height: var(--weather-text-2-line);
+    font-weight: var(--weather-text-2-weight);
+}
+
+.textPreset3 {
+    font-family: var(--weather-text-3-font);
+    font-size: var(--weather-text-3-size);
+    line-height: var(--weather-text-3-line);
+    font-weight: var(--weather-text-3-weight);
+}
+
+.textPreset4 {
+    font-family: var(--weather-text-4-font);
+    font-size: var(--weather-text-4-size);
+    line-height: var(--weather-text-4-line);
+    font-weight: var(--weather-text-4-weight);
+}
+
+.textPreset5,
+.textPreset6,
+.textPreset7,
+.textPreset8 {
+    font-family: var(--weather-text-body-font);
+    line-height: var(--weather-text-body-line);
+    font-weight: var(--weather-text-body-weight);
+}
+
+.textPreset5 {
+    font-size: var(--weather-text-5-size);
+}
+.textPreset6 {
+    font-size: var(--weather-text-6-size);
+}
+.textPreset7 {
+    font-size: var(--weather-text-7-size);
+}
+.textPreset8 {
+    font-size: var(--weather-text-8-size);
+}
