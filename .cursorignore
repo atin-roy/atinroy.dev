@@ -1,0 +1,41 @@
+# -- Dependencies (Massive Token Waste) --
+node_modules/
+# Lock files are too dense for useful context. 
+# Cursor usually only needs package.json to understand deps.
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# -- Build Artifacts (Next.js / Web) --
+.next/
+dist/
+build/
+out/
+.cache/
+public/ # Optional: Ignore if you have large assets/images here
+
+# -- Build Artifacts (Spring Boot / Java) --
+target/
+.gradle/
+build/
+*.class
+*.jar
+*.war
+
+# -- Monorepo & Tooling Caches --
+.turbo/
+.nx/
+coverage/
+__snapshots__/
+
+# -- System & Logs --
+.DS_Store
+.git/
+.github/ # Usually safe to ignore unless you are writing actions
+*.log
+*.zip
+*.tar.gz
+
+# -- Secrets --
+.env
+.env.*

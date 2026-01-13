@@ -1,0 +1,49 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+
+  "extends": [
+    "config:recommended",
+    ":semanticCommits",
+    ":dependencyDashboard",
+    "helpers:pinGitHubActionDigests"
+  ],
+
+  "timezone": "Asia/Kolkata",
+
+  "dependencyDashboard": true,
+
+  "stabilityDays": 3,
+
+  "prHourlyLimit": 2,
+  "prConcurrentLimit": 5,
+
+  "rangeStrategy": "replace",
+
+  "node": {
+    "enabled": true,
+    "supportPolicy": ["lts"]
+  },
+
+  "packageRules": [
+    {
+      "description": "Only stable releases (no alpha/beta/rc)",
+      "matchPackagePatterns": [".*"],
+      "allowedVersions": "!/alpha|beta|rc|canary|next/"
+    },
+    {
+      "description": "Group all minor + patch updates",
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "minor-and-patch-dependencies"
+    },
+    {
+      "description": "Major updates are isolated",
+      "matchUpdateTypes": ["major"],
+      "separateMajorMinor": true
+    }
+  ],
+
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["weekly"]
+  }
+}

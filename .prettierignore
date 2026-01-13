@@ -1,0 +1,19 @@
+# --- Dependencies & Build Artifacts ---
+node_modules
+dist
+build
+coverage
+target
+.next
+out
+
+# --- Package Managers ---
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# --- System & IDE ---
+.DS_Store
+.git
+.idea
+.vscode
