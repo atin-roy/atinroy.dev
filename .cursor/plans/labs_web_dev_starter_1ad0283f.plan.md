@@ -14,8 +14,8 @@ Build a very small "Lab Notes" stack where a Next.js App Router front-end lets y
 
 1. **Scaffold the stacks**
 
-- Create `apps/labs-frontend` (Next.js App Router, `pnpm` workspace) with a single page and global styles.
-- Create `services/labs-backend` (Spring Boot Gradle project) with Kotlin or Java records for note DTOs.
+- Create `labs/notes-project/frontend` (Next.js App Router, `pnpm` workspace) with a single page and global styles.
+- Create `labs/notes-project/backend` (Spring Boot Gradle project) with Kotlin or Java records for note DTOs.
 - Wire workspace `package.json/pnpm` and Gradle settings so both live in the repo without interfering.
 
 2. **Implement backend note API**
