@@ -1,0 +1,26 @@
+---
+alwaysApply: true
+description: "Monorepo architecture, routing, and deployment philosophy."
+globs: ["pnpm-workspace.yaml", "apps/**/*", "labs/**/*", "package.json"]
+---
+
+# PROJECT CONTEXT: ATINROY.DEV (MONOREPO)
+
+## Structure
+
+- `apps/web`: Next.js frontend (The platform).
+- `apps/api`: Spring Boot backend (The single source of truth).
+- `labs/`: Messy learning, experiments, spikes. Not for production.
+
+## Philosophy
+
+- **Identity:** `apps/` = things you stand behind. `labs/` = things you learn from.
+- **Routing:** Projects are ROUTES (`/todo`, `/weather`), NOT subdomains.
+- **Backend Rule:** Single Spring Boot instance (`apps/api`) serves ALL apps requiring Auth/DB.
+- **Anti-Pattern:** Do NOT use Spring Boot for simple API wrapping (use Next.js Server Actions).
+- **Tooling:** Root `pnpm` coordinates Node workspaces. Java is independent.
+
+## Domains
+
+- `atinroy.dev` → Frontend
+- `api.atinroy.dev` → Backend

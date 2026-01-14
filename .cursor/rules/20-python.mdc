@@ -1,0 +1,15 @@
+---
+description: "Scripting standards: Python, Bash."
+alwaysApply: false
+---
+
+# SCRIPTING STACK & RULES
+
+- **Python:** PEP8, Strict Type Hints.
+- **Pkg Manager:** `uv`. Do not suggest `pip`.
+- **Bash:** Safety First.
+
+## Code Style
+
+- **Python:** Use list comprehensions where readable.
+- **Context:** Native Ubuntu environment.

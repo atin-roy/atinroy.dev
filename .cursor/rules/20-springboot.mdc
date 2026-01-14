@@ -1,0 +1,23 @@
+---
+description: "Backend standards: Spring Boot, Java, Maven, Gradle, Kotlin"
+alwaysApply: false
+---
+
+# BACKEND STACK & RULES
+
+- **Framework:** Spring Boot (Java 25+).
+- **Style:** Prefer `record` classes for DTOs and strict Dependency Injection.
+- **Package Manager:** Maven or Gradle.
+
+## When to use Spring Boot
+
+- Auth is required.
+- User data persistence is required.
+- Complex business logic exists.
+- **DO NOT USE** if: No auth, no DB, simple API wrapping.
+
+## Code Style
+
+- Use industry standards.
+- Modular code.
+- Extensive comments only on _complex_ logic.

@@ -1,0 +1,17 @@
+---
+description: "Frontend standards: Next.js, TypeScript, Tailwind."
+globs: ["apps/web/**/*", "*.tsx", "*.ts", "*.css"]
+---
+
+# FRONTEND STACK & RULES
+
+- **Framework:** Next.js (App Router).
+- **Language:** TypeScript (Strict Mode). No `any`. Use interfaces/types explicitly.
+- **Styling:** Tailwind CSS & Shadcn.
+- **Package Manager:** `pnpm`.
+
+## Principles
+
+- **Data Fetching:** Fetch server-side where possible.
+- **Caching:** Add caching at the frontend layer if the backend isn't needed.
+- **Optimization:** Focus on scannability and modular code.
