@@ -55,17 +55,19 @@ The repo itself does not "run" anything.
 ```
 atinroy.dev/
 ├── apps/
-│   ├── web/        # Main Next.js frontend (atinroy.dev)
-│   └── api/        # Spring Boot backend (api.atinroy.dev)
+│   ├── web/              # Main Next.js frontend (atinroy.dev)
+│   └── api/              # Spring Boot backend (planned, not yet implemented)
 │
-├── labs/           # Experiments & practice projects
-│   ├── counter/
-│   ├── ui-tests/
-│   └── animations/
+├── labs/                 # Experiments & practice projects
+│   ├── dsa-java/         # DSA practice (Maven)
+│   ├── learn-data-mutation/  # Next.js learning
+│   └── notes-project/    # Full-stack experiment (Gradle + Next.js)
 │
-├── packages/       # Shared code (only when needed)
+├── packages/             # Shared code (only when needed)
 │
-├── docs/           # Notes, decisions, ADRs
+├── docs/                 # Notes, decisions, workflows
+│
+├── infrastructure/       # Docker, deployment configs
 │
 ├── pnpm-workspace.yaml
 ├── package.json
@@ -103,12 +105,12 @@ Multiple projects ≠ multiple frontends.
 
 ---
 
-## 6. apps/api — the backend platform
+## 6. apps/api — the backend platform (planned)
 
 ### Purpose
 
-- One backend for all apps
-- Handles:
+- One backend for all apps requiring auth/DB
+- Will handle:
   - authentication
   - authorization
   - persistence
@@ -120,7 +122,9 @@ Multiple projects ≠ multiple frontends.
 
 Auth is applied **per route**, not per server.
 
-Examples:
+**Status:** Not yet implemented. Currently, `apps/web` uses Next.js Server Actions for simple backend needs (e.g., weather API calls). The Spring Boot backend will be introduced when auth or database persistence is required.
+
+Examples (future):
 - `/weather/**` → public
 - `/todo/**` → user auth
 - `/admin/**` → admin only
@@ -132,16 +136,17 @@ Examples:
 Do **not** introduce Spring Boot when:
 - there is no auth
 - there is no user data
+- there is no database persistence
 - there is no business logic
 
-Example: weather app
+**Example:** The weather app at `/weather`
 
-Correct approach:
-- Fetch data server-side in Next.js
-- Keep API keys secret
+Current (correct) approach:
+- Fetch data server-side in Next.js Server Actions
+- Keep API keys secret in environment variables
 - Add caching at the frontend layer
 
-This is not cutting corners. This is correct engineering.
+This is not cutting corners. This is appropriate architecture.
 
 ---
 
@@ -149,10 +154,18 @@ This is not cutting corners. This is correct engineering.
 
 ### What belongs here
 
-- small Next.js apps
+- Small Next.js apps for learning
 - UI experiments
-- counters, demos, spikes
-- learning projects
+- DSA practice (Java/Kotlin)
+- Full-stack experiments
+- Course follow-alongs
+- Spikes and demos
+
+### Current labs
+
+- `dsa-java` — Data structures & algorithms practice (Maven, Java 25)
+- `learn-data-mutation` — Next.js data mutations learning
+- `notes-project` — Full-stack notes app (Spring Boot + Next.js)
 
 ### Rules
 
@@ -191,14 +204,14 @@ Progress beats polish.
 
 The root uses pnpm **only** to coordinate Node projects.
 
-Java is unaffected.
+Java projects are independent and self-contained.
 
-Example `pnpm-workspace.yaml`:
+Current `pnpm-workspace.yaml`:
 
 ```yaml
 packages:
   - "apps/*"
-  - "labs/*"
+  - "labs/**"
   - "packages/*"
 ```
 
@@ -206,9 +219,9 @@ packages:
 
 - The repo root is NOT a Next.js project
 - `apps/web` IS the Next.js project
-- `apps/api` IS the Spring Boot project
+- Java projects (in labs) use their own build tools (Maven/Gradle)
 
-They are siblings, not parent/child.
+Frontend and backend builds are intentionally isolated.
 
 ---
 

@@ -1,6 +1,8 @@
-# Labs Monorepo Workflow (Next.js + pnpm)
+# Next.js Monorepo Workflow (pnpm)
 
-This document defines **how labs projects work**, **how to add dependencies**, and **how to handle external starter projects** (Udemy, GitHub templates, etc.) inside the monorepo.
+This document defines **how Next.js projects work** in this monorepo, **how to add dependencies**, and **how to handle external starter projects** (Udemy, GitHub templates, etc.).
+
+Applies to both `apps/` (production) and `labs/` (learning).
 
 The goal: **modern tooling, deterministic installs, zero chaos**.
 
@@ -21,51 +23,53 @@ Breaking these rules leads to dependency drift and pain.
 ## Folder Structure
 
 ```
-
-repo-root/
+atinroy.dev/
 ├─ package.json
 ├─ pnpm-workspace.yaml
 ├─ pnpm-lock.yaml
-├─ node_modules/.pnpm/ # actual dependency store
+├─ node_modules/.pnpm/           # actual dependency store
+├─ apps/
+│  └─ web/                       # production frontend
+│     ├─ package.json
+│     ├─ src/
+│     └─ node_modules/           # symlinks (not real installs)
 ├─ labs/
-│ ├─ weather-app/
-│ │ ├─ package.json
-│ │ └─ node_modules/ # symlinks (not real installs)
-│ └─ udemy-blog/
-│ ├─ package.json
-│ └─ node_modules/
+│  ├─ learn-data-mutation/       # Next.js learning
+│  │  ├─ package.json
+│  │  └─ node_modules/
+│  └─ notes-project/frontend/    # Next.js experiment
+│     ├─ package.json
+│     └─ node_modules/
 └─ docs/
-
 ```
 
-Each lab **appears** to have its own `node_modules`, but pnpm stores dependencies once and links them.
+Each project **appears** to have its own `node_modules`, but pnpm stores dependencies once and links them.
 
 ---
 
-## Adding a New Next.js Lab
+## Adding a New Next.js Project
+
+### For labs (learning projects)
 
 1. Create the folder:
 
-```
-
+```bash
 labs/my-next-app/
-
 ```
 
-2. Ensure `pnpm-workspace.yaml` includes labs:
+2. Add a `package.json` to the lab.
 
-```yaml
-packages:
-  - "labs/*"
+3. Install dependencies **from repo root**:
+
+```bash
+pnpm install
 ```
 
-3. Add a `package.json` to the lab.
+The `pnpm-workspace.yaml` already includes `labs/**`.
 
-4. Install dependencies **from repo root**:
+### For apps (production projects)
 
-   ```bash
-   pnpm install
-   ```
+Same process, but place in `apps/` instead. These are projects you stand behind.
 
 ---
 
@@ -136,7 +140,7 @@ If things break, that’s expected—and educational.
 
 ---
 
-### Step 4: Run the lab
+### Step 4: Run the project
 
 From repo root:
 
@@ -150,44 +154,51 @@ Alternative:
 pnpm -C labs/udemy-project dev
 ```
 
+For production apps:
+
+```bash
+pnpm --filter web dev
+```
+
 ---
 
-## Adding Dependencies to a Specific Lab
+## Adding Dependencies to a Specific Project
 
 Always run from **repo root**.
 
 ### Add a dependency
 
 ```bash
-pnpm --filter weather-app add axios
+pnpm --filter web add axios              # for apps/web
+pnpm --filter learn-data-mutation add axios  # for labs
 ```
 
 ### Add a dev dependency
 
 ```bash
-pnpm --filter weather-app add -D tailwindcss
+pnpm --filter web add -D tailwindcss
 ```
 
 ### Add multiple
 
 ```bash
-pnpm --filter weather-app add zod react-hook-form
+pnpm --filter web add zod react-hook-form
 ```
 
 ### Upgrade a dependency
 
 ```bash
-pnpm --filter weather-app up next
+pnpm --filter web up next
 ```
 
 ---
 
 ## What NOT To Do (Hard Rules)
 
-❌ Do not run `npm install` anywhere
-❌ Do not run `pnpm install` inside `labs/*`
-❌ Do not commit `node_modules/`
-❌ Do not mix package managers
+❌ Do not run `npm install` anywhere  
+❌ Do not run `pnpm install` inside `apps/*` or `labs/*`  
+❌ Do not commit `node_modules/`  
+❌ Do not mix package managers  
 ❌ Do not edit `pnpm-lock.yaml` manually
 
 ---
@@ -222,12 +233,13 @@ If all pass → commit with confidence.
 ## Mental Model
 
 - **Repo root** = control center
-- **Labs** = isolated sandboxes
+- **Apps** = production projects you stand behind
+- **Labs** = isolated learning sandboxes
 - **pnpm** = dependency orchestrator
 - **Lockfile** = single source of truth
 - **Filters** = precision tools
 
-You always act from the root.
+You always act from the root.  
 You always target explicitly.
 
 ---

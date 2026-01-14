@@ -1,8 +1,10 @@
-# Labs Monorepo Workflow (Spring Boot Backends)
+# Spring Boot Monorepo Workflow
 
-This document defines **how Spring Boot backend labs work**, **how to add dependencies**, and **how to handle external starter projects** inside the monorepo.
+This document defines **how Spring Boot backends work** in this monorepo, **how to add dependencies**, and **how to handle external starter projects**.
 
-The goal: **modern Java, reproducible builds, zero “works on my machine” energy**.
+Applies to both `apps/api` (production, when implemented) and `labs/` (learning).
+
+The goal: **modern Java, reproducible builds, zero "works on my machine" energy**.
 
 ---
 
@@ -20,69 +22,73 @@ Unlike JS, Java builds are intentionally siloed.
 
 ## Recommended Tooling Baseline
 
-- **Java**: LTS only (25 preferred)
+- **Java**: Java 21 (current LTS) or Java 25 (latest)
 - **Spring Boot**: latest stable
-- **Build tool**: Gradle (Kotlin DSL preferred, Groovy acceptable)
+- **Build tool**: Gradle (Kotlin DSL preferred, Groovy acceptable) or Maven
 - **JDK management**: SDKMAN or system-wide JDK
+
+**Note:** Current projects use Java 25. Java 21 is the LTS recommendation for production.
 
 ---
 
 ## Folder Structure
 
 ```
-
-repo-root/
+atinroy.dev/
+├─ apps/
+│  └─ api/                    # production backend (planned, not yet implemented)
+│     ├─ build.gradle.kts
+│     ├─ settings.gradle.kts
+│     ├─ gradlew
+│     └─ src/
 ├─ labs/
-│ ├─ weather-api/
-│ │ ├─ build.gradle(.kts)
-│ │ ├─ settings.gradle(.kts)
-│ │ ├─ gradlew
-│ │ ├─ gradle/
-│ │ └─ src/
-│ └─ auth-service/
-│ ├─ build.gradle(.kts)
-│ └─ src/
+│  ├─ dsa-java/               # DSA practice (Maven, Java 25)
+│  │  ├─ pom.xml
+│  │  └─ src/
+│  └─ notes-project/backend/  # Spring Boot experiment (Gradle, Java 25)
+│     ├─ build.gradle.kts
+│     ├─ gradlew
+│     └─ src/
 ├─ docs/
 └─ .gitignore
-
 ```
 
 Each backend is a **self-contained JVM project**.
 
 ---
 
-## Creating a New Spring Boot Lab
+## Creating a New Spring Boot Project
 
-### Option A — Spring Initializr (recommended)
+### For labs (learning projects)
+
+#### Option A — Spring Initializr (recommended)
 
 Generate with:
 
-- Project: Gradle
+- Project: Gradle (Kotlin DSL) or Maven
 - Language: Java
-- Java: 25
+- Java: 21 (LTS) or 25 (latest)
 - Spring Boot: latest stable
 
 Then place it in:
 
-```
-
+```bash
 labs/my-backend/
-
 ```
 
----
-
-### Option B — Copy an existing project
+#### Option B — Copy an existing project
 
 Copy files only:
 
-```
-
+```bash
 labs/external-backend/
-
 ```
 
 Do **not** build yet.
+
+### For apps (production)
+
+When `apps/api` is created, it will follow the same process but live in `apps/api/`.
 
 ---
 
@@ -117,9 +123,9 @@ Result:
 
 Update:
 
-- Java → 21
+- Java → 21 (LTS) or 25 (latest)
 - Spring Boot → latest stable
-- Migrate Maven → Gradle if needed
+- Migrate Maven → Gradle if desired
 
 Expect:
 
@@ -127,14 +133,18 @@ Expect:
 - Deprecated config warnings
 - Learning by friction (the good kind)
 
+**Current projects** (`dsa-java`, `notes-project/backend`) use Java 25.
+
 ---
 
-## Running a Backend Lab
+## Running a Backend Project
 
-Always run commands **inside the lab folder**:
+Always run commands **inside the project folder**:
+
+### Gradle projects
 
 ```bash
-cd labs/weather-api
+cd labs/notes-project/backend
 ./gradlew bootRun
 ```
 
@@ -142,6 +152,14 @@ Or (Windows):
 
 ```powershell
 gradlew bootRun
+```
+
+### Maven projects
+
+```bash
+cd labs/dsa-java
+./mvnw spring-boot:run    # if it were a Spring Boot project
+mvn test                  # for running tests
 ```
 
 Each backend owns its lifecycle.
@@ -212,22 +230,33 @@ Use **Gradle toolchains**:
 ```kotlin
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+        languageVersion.set(JavaLanguageVersion.of(25))  // or 21 for LTS
     }
 }
+```
+
+Or for **Maven**:
+
+```xml
+<properties>
+    <maven.compiler.source>25</maven.compiler.source>
+    <maven.compiler.target>25</maven.compiler.target>
+</properties>
 ```
 
 This guarantees:
 
 - Same Java version everywhere
 - CI and local parity
-- Fewer “JDK mismatch” bugs
+- Fewer "JDK mismatch" bugs
 
 ---
 
 ## Before Committing (Checklist)
 
-From inside the lab:
+From inside the project:
+
+### Gradle
 
 ```bash
 ./gradlew clean
@@ -238,6 +267,14 @@ Optional but recommended:
 
 ```bash
 ./gradlew test
+```
+
+### Maven
+
+```bash
+mvn clean
+mvn compile
+mvn test
 ```
 
 If this passes, the backend is commit-safe.
@@ -256,13 +293,17 @@ If this passes, the backend is commit-safe.
 
 ## Mental Model
 
-- **Each backend is a sealed box**
-- **Gradle wrapper = source of truth**
+- **Apps** = production backends (when implemented)
+- **Labs** = learning backends (sealed boxes)
+- **Gradle/Maven wrapper** = source of truth
 - **Java versions are explicit**
 - **Isolation beats convenience**
 
-Frontend monorepo ≠ backend monorepo.
+Frontend monorepo ≠ backend monorepo.  
 That asymmetry is intentional.
+
+Node projects share dependencies via pnpm.  
+Java projects are fully independent.
 
 ---
 
