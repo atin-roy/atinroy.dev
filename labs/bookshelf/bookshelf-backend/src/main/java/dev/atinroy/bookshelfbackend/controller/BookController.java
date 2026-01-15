@@ -14,7 +14,7 @@ public class BookController {
     private static final List<BookInfo> BOOKS = List.of(
         new BookInfo(
             1L,
-            "Effective Java",
+            "Harry Potter",
             "Joshua Bloch",
             4.9,
             "A comprehensive guide to best practices in Java programming."

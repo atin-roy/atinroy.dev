@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: bookshelf-backend
+
+logging:
+  level:
+    org.springframework.security: TRACE
+    org.springframework.web: DEBUG
