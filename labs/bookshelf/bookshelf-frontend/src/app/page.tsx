@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen bg-background px-6 py-16 text-foreground">
+    <main className="relative bg-background px-6 py-16 text-foreground">
       <div className="mx-auto flex max-w-4xl flex-col gap-10">
         <section className="space-y-6">
           <p className="text-xs uppercase tracking-[0.6em] text-muted-foreground">
