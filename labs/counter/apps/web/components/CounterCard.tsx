@@ -1,12 +1,14 @@
 "use client";
 import {
   ChangeEvent,
+  CSSProperties,
   KeyboardEvent,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
+import { Palette, Trash2 } from "lucide-react";
 
 const presetColors = ["#7C3AED", "#0EA5E9", "#F97316", "#16A34A", "#EC4899"];
 
@@ -172,6 +174,11 @@ export default function CounterCard({
       ? "opacity-100 scale-100"
       : "opacity-0 scale-95";
   const stackingClass = pickerOpen ? "z-40" : "z-0";
+  const iconButtonStyle: CSSProperties & { "--icon-bg": string } = {
+    backgroundColor: "transparent",
+    color: palette.buttonText,
+    "--icon-bg": palette.button,
+  };
 
   return (
     <div
@@ -182,28 +189,20 @@ export default function CounterCard({
         type="button"
         onClick={togglePickerOpen}
         aria-pressed={pickerOpen}
-        className="absolute top-3 right-3 hidden items-center justify-center gap-1 rounded-full border border-white/40 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white transition duration-150 group-hover:flex"
-        style={{
-          backgroundColor: palette.button,
-          color: palette.buttonText,
-          boxShadow: `0 8px 20px ${palette.shadow}`,
-        }}
+        className="icon-action-button absolute top-3 right-3 flex items-center justify-center rounded-full p-1.5 transition duration-150"
+        style={iconButtonStyle}
       >
-        <span aria-hidden>🎨</span>
+        <Palette size={18} aria-hidden />
         <span className="sr-only">Toggle color picker</span>
       </button>
       <button
         type="button"
         onClick={onDelete}
         aria-label="Delete counter"
-        className="absolute top-3 left-3 hidden items-center justify-center gap-1 rounded-full border border-white/40 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white transition duration-150 group-hover:flex"
-        style={{
-          backgroundColor: palette.button,
-          color: palette.buttonText,
-          boxShadow: `0 8px 20px ${palette.shadow}`,
-        }}
+        className="icon-action-button absolute top-3 left-3 flex items-center justify-center rounded-full p-1.5 transition duration-150"
+        style={iconButtonStyle}
       >
-        <span aria-hidden>✕</span>
+        <Trash2 size={18} aria-hidden />
         <span className="sr-only">Delete counter</span>
       </button>
       <input
@@ -328,6 +327,16 @@ export default function CounterCard({
         }
         .picker-panel-closed {
           animation: pickerRetract 200ms ease-in forwards;
+        }
+        .icon-action-button {
+          background-color: transparent;
+          transition:
+            transform 150ms ease,
+            background-color 150ms ease;
+        }
+        .icon-action-button:active,
+        .icon-action-button:focus-visible {
+          background-color: var(--icon-bg);
         }
         @keyframes pickerExpand {
           0% {
