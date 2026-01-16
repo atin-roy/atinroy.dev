@@ -1,15 +1,28 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&family=Fira+Code:wght@400;500&display=swap");
 @import "tailwindcss";
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --font-counter-display: "Space Grotesk", system-ui, sans-serif;
+  --font-counter-mono: "Fira Code", "JetBrains Mono", Menlo, monospace;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-counter-display);
+  --font-mono: var(--font-counter-mono);
+}
+
+@layer utilities {
+  .font-counter-display {
+    font-family: var(--font-counter-display);
+  }
+
+  .font-counter-mono {
+    font-family: var(--font-counter-mono);
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +35,5 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-counter-display);
 }
