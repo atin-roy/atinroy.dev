@@ -171,10 +171,11 @@ export default function CounterCard({
     : hasMounted
       ? "opacity-100 scale-100"
       : "opacity-0 scale-95";
+  const stackingClass = pickerOpen ? "z-40" : "z-0";
 
   return (
     <div
-      className={`relative group p-4 flex flex-col gap-4 items-center w-full max-w-2xs rounded-2xl text-center overflow-visible transition-all duration-250 ease-out ${animationStateClass}`}
+      className={`relative group p-4 flex flex-col gap-4 items-center w-full max-w-2xs rounded-2xl text-center overflow-visible transition-all duration-250 ease-out ${animationStateClass} ${stackingClass}`}
       style={{ backgroundColor: palette.card }}
     >
       <button
@@ -267,7 +268,7 @@ export default function CounterCard({
       </div>
       {pickerMounted && (
         <div
-          className={`color-picker-panel absolute left-0 top-full z-10 mt-3 flex w-full flex-col items-center gap-3 rounded-3xl border border-white/20 bg-white/5 p-4 text-center shadow-[0_16px_40px_rgba(15,23,42,0.55)] backdrop-blur ${
+          className={`color-picker-panel absolute left-0 top-full z-30 mt-3 flex w-full flex-col items-center gap-3 rounded-3xl border border-white/20 bg-white/5 p-4 text-center shadow-[0_16px_40px_rgba(15,23,42,0.55)] backdrop-blur ${
             pickerOpen
               ? "picker-panel-open pointer-events-auto"
               : "picker-panel-closed pointer-events-none"

@@ -21,9 +21,8 @@ export default function Home() {
   const [counterConfigs, setCounterConfigs] = useState<CounterConfig[]>(
     () => initialCounterConfigs,
   );
-  const nextIdRef = useRef(initialCounterConfigs.length + 1);
-  const nextColorIndexRef = useRef(initialCounterConfigs.length);
-  const [removingIds, setRemovingIds] = useState<Set<number>>(() => new Set());
+  const nextIdRef = useRef(counterConfigs.length + 1);
+  const nextColorIndexRef = useRef(counterConfigs.length);
 
   const addCounter = useCallback(() => {
     setCounterConfigs((prev) => {
@@ -39,22 +38,7 @@ export default function Home() {
     });
   }, []);
 
-  const startRemovingCounter = useCallback((id: number) => {
-    setRemovingIds((prev) => {
-      if (prev.has(id)) return prev;
-      const next = new Set(prev);
-      next.add(id);
-      return next;
-    });
-  }, []);
-
-  const finishRemovingCounter = useCallback((id: number) => {
-    setRemovingIds((prev) => {
-      if (!prev.has(id)) return prev;
-      const next = new Set(prev);
-      next.delete(id);
-      return next;
-    });
+  const removeCounter = useCallback((id: number) => {
     setCounterConfigs((prev) => prev.filter((config) => config.id !== id));
   }, []);
 
@@ -65,9 +49,7 @@ export default function Home() {
           <CounterCard
             key={config.id}
             initialColor={config.color}
-            onDelete={() => startRemovingCounter(config.id)}
-            isRemoving={removingIds.has(config.id)}
-            onRemoveAnimationEnd={() => finishRemovingCounter(config.id)}
+            onDelete={() => removeCounter(config.id)}
           />
         ))}
         <NewCounter onAdd={addCounter} />
