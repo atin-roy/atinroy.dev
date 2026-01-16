@@ -72,9 +72,19 @@ const derivePalette = (base: string) => {
 
 type CounterCardProps = {
   initialColor?: string;
+  onDelete?: () => void;
+  isRemoving?: boolean;
+  onRemoveAnimationEnd?: () => void;
 };
 
-export default function CounterCard({ initialColor }: CounterCardProps) {
+const removalAnimationDuration = 220;
+
+export default function CounterCard({
+  initialColor,
+  onDelete,
+  isRemoving = false,
+  onRemoveAnimationEnd,
+}: CounterCardProps) {
   const [title, setTitle] = useState("Counter");
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const titleInputRef = useRef<HTMLInputElement>(null);
@@ -84,6 +94,7 @@ export default function CounterCard({ initialColor }: CounterCardProps) {
   );
   const [pickerOpen, setPickerOpen] = useState(false);
   const [pickerMounted, setPickerMounted] = useState(pickerOpen);
+  const [hasMounted, setHasMounted] = useState(false);
 
   const palette = useMemo(() => derivePalette(baseColor), [baseColor]);
 
@@ -117,6 +128,23 @@ export default function CounterCard({ initialColor }: CounterCardProps) {
     getLuminance(palette.opposite) < 0.5 ? "#F8FAFC" : "#0F172A";
 
   useEffect(() => {
+    const frame = requestAnimationFrame(() => setHasMounted(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  useEffect(() => {
+    if (!isRemoving) {
+      return;
+    }
+
+    const timer = setTimeout(
+      () => onRemoveAnimationEnd?.(),
+      removalAnimationDuration,
+    );
+    return () => clearTimeout(timer);
+  }, [isRemoving, onRemoveAnimationEnd]);
+
+  useEffect(() => {
     if (isEditingTitle) {
       titleInputRef.current?.focus();
       titleInputRef.current?.select();
@@ -138,9 +166,15 @@ export default function CounterCard({ initialColor }: CounterCardProps) {
     }
   };
 
+  const animationStateClass = isRemoving
+    ? "opacity-0 scale-90 pointer-events-none"
+    : hasMounted
+      ? "opacity-100 scale-100"
+      : "opacity-0 scale-95";
+
   return (
     <div
-      className="relative group p-4 flex flex-col gap-4 items-center w-full max-w-2xs rounded-2xl text-center overflow-visible"
+      className={`relative group p-4 flex flex-col gap-4 items-center w-full max-w-2xs rounded-2xl text-center overflow-visible transition-all duration-250 ease-out ${animationStateClass}`}
       style={{ backgroundColor: palette.card }}
     >
       <button
@@ -156,6 +190,20 @@ export default function CounterCard({ initialColor }: CounterCardProps) {
       >
         <span aria-hidden>🎨</span>
         <span className="sr-only">Toggle color picker</span>
+      </button>
+      <button
+        type="button"
+        onClick={onDelete}
+        aria-label="Delete counter"
+        className="absolute top-3 left-3 hidden items-center justify-center gap-1 rounded-full border border-white/40 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white transition duration-150 group-hover:flex"
+        style={{
+          backgroundColor: palette.button,
+          color: palette.buttonText,
+          boxShadow: `0 8px 20px ${palette.shadow}`,
+        }}
+      >
+        <span aria-hidden>✕</span>
+        <span className="sr-only">Delete counter</span>
       </button>
       <input
         ref={titleInputRef}
