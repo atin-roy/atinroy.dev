@@ -1,0 +1,213 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                  COUNTER BACKEND - QUICK REFERENCE CARD                      ║
+║                      Spring Boot REST API Reference                          ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+📍 DOCUMENTATION FILES (Read in this order)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. README_START_HERE.md          → Quick overview & navigation
+2. ARCHITECTURE_GUIDE.md         → Complete flow & all concepts
+3. src/main/java/.../entity/README.md       → Database models
+4. src/main/java/.../repository/README.md   → Query layer
+5. src/main/java/.../dto/README.md          → API contracts
+6. src/main/java/.../mapper/README.md       → DTO conversion
+7. src/main/java/.../controller/README.md   → HTTP endpoints
+8. src/main/java/.../security/README.md     → Authentication
+
+🔄 REQUEST FLOW (30 seconds)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+HTTP Request
+    ↓
+SecurityConfig (Authentication + Authorization)
+    ↓
+ApiController (Validate + Check ownership)
+    ↓
+Repository (Query database)
+    ↓
+Entity (JPA manages this)
+    ↓
+Mapper (Entity → DTO)
+    ↓
+HTTP Response (JSON)
+
+🏗️ PACKAGE STRUCTURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+security/          Authentication & Authorization
+    ├── SecurityConfig.java              ← Security rules
+    └── CustomUserDetailsService.java    ← Load user from DB
+
+controller/        HTTP Endpoints
+    └── ApiController.java               ← 8 REST endpoints
+
+dto/               API Contracts (Input/Output)
+    ├── user/CreateUserRequest.java      ← Register form
+    ├── user/UserResponse.java           ← User in response
+    ├── counter/CreateCounterRequest.java ← Create counter form
+    ├── counter/UpdateCounterRequest.java ← Update counter form
+    ├── counter/IncrementCounterRequest.java ← Increment form
+    └── counter/CounterResponse.java     ← Counter in response
+
+entity/            Database Models
+    ├── User.java                        ← users table
+    └── Counter.java                     ← counters table
+
+repository/        Database Queries (Spring Data JPA)
+    ├── UserRepository.java              ← User queries
+    └── CounterRepository.java           ← Counter queries
+
+mapper/            Entity ↔ DTO Conversion (MapStruct)
+    └── UserMapper.java                  ← User conversion
+
+🌐 THE 8 REST ENDPOINTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. POST   /api/users                           → Register (public)
+2. GET    /api/users/{userId}                  → Get profile (auth required)
+3. GET    /api/users?username=...              → Search users (auth required)
+4. POST   /api/users/{userId}/counters         → Create counter (auth required)
+5. GET    /api/users/{userId}/counters         → List counters (auth required)
+6. PATCH  /api/users/{userId}/counters/{id}   → Update counter (auth required)
+7. PATCH  /api/users/{userId}/counters/{id}/increment → Increment (auth required)
+8. DELETE /api/users/{userId}/counters/{id}   → Delete counter (auth required)
+
+🔐 SECURITY (Three Layers)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Layer 1: Authentication (Who are you?)
+  → HTTP Basic: Authorization: Basic base64(email:password)
+  → CustomUserDetailsService loads user from database
+
+Layer 2: Authorization (Are you allowed?)
+  → Controller checks ensureUserMatches(userId)
+  → Returns 403 Forbidden if user doesn't own resource
+
+Layer 3: Data Scoping (Can't access what doesn't exist)
+  → All repository queries include userId
+  → Database-level protection
+
+HTTP STATUS CODES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+201 Created             → Resource created successfully
+200 OK                  → Request succeeded with data
+204 No Content          → Request succeeded, no data (e.g., DELETE)
+400 Bad Request         → Validation failed or invalid input
+401 Unauthorized        → Not authenticated or bad credentials
+403 Forbidden           → Authenticated but not allowed
+404 Not Found           → Resource doesn't exist
+409 Conflict            → Duplicate (e.g., email already registered)
+
+📚 KEY CONCEPTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Entity vs DTO
+  Entity: Internal database model (never expose in API)
+  DTO: External data contract (request/response)
+
+Optional (null-safe)
+  findByEmail() returns Optional<User>
+  user.ifPresent(...) or user.orElseThrow(...)
+
+Spring Data JPA Query Methods
+  findByEmail() → SELECT * FROM users WHERE email = ?
+  findByCounterIdAndUserId() → SELECT * WHERE id=? AND user_id=?
+
+@Valid Validation
+  @Valid on @RequestBody triggers validation
+  Validation fails → 400 Bad Request
+
+MapStruct Code Generation
+  @Mapper generates entity→DTO conversion at compile time
+  Password field not in DTO → password never copied
+
+💻 TESTING WITH CURL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Register
+curl -X POST http://localhost:8080/api/users \
+  -H "Content-Type: application/json" \
+  -d '{"email":"atin@dev.com","username":"atin","password":"secure123"}'
+
+# Create counter (with auth)
+curl -X POST http://localhost:8080/api/users/1/counters \
+  -u atin@dev.com:secure123 \
+  -H "Content-Type: application/json" \
+  -d '{"counterName":"Push-ups","counterValue":0}'
+
+# List counters
+curl -X GET http://localhost:8080/api/users/1/counters \
+  -u atin@dev.com:secure123
+
+# Update counter
+curl -X PATCH http://localhost:8080/api/users/1/counters/1 \
+  -u atin@dev.com:secure123 \
+  -H "Content-Type: application/json" \
+  -d '{"counterValue":25}'
+
+# Increment counter
+curl -X PATCH http://localhost:8080/api/users/1/counters/1/increment \
+  -u atin@dev.com:secure123 \
+  -H "Content-Type: application/json" \
+  -d '{"incrementBy":5}'
+
+# Delete counter
+curl -X DELETE http://localhost:8080/api/users/1/counters/1 \
+  -u atin@dev.com:secure123
+
+📊 DATABASE SCHEMA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+users table                    counters table
+├─ user_id (PK)              ├─ counter_id (PK)
+├─ email (UNIQUE)            ├─ counter_name
+├─ username                  ├─ counter_value
+├─ password                  ├─ user_id (FK → users)
+├─ created_at                ├─ created_at
+└─ updated_at                └─ updated_at
+
+Relationship: One user → Many counters (1:N)
+
+🎯 QUICK LEARNING PATH
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Read README_START_HERE.md (5 min)
+2. Read ARCHITECTURE_GUIDE.md (15 min)
+3. Read each package README in order (45 min)
+4. Read inline comments in Java files (20 min)
+5. Run application and test endpoints (15 min)
+
+Total: ~100 minutes to master the architecture
+
+⚠️ WHAT'S NOT PRODUCTION-READY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+❌ NoOpPasswordEncoder (plaintext passwords)  → Use BCryptPasswordEncoder
+❌ HTTP Basic (credentials every request)    → Use JWT tokens
+❌ No @Transactional (transaction safety)    → Add @Transactional
+❌ No centralized error handling             → Use @ControllerAdvice
+❌ No logging                                 → Add SLF4J
+❌ No rate limiting                           → Add rate limiter
+❌ No tests                                   → Add unit & integration tests
+
+✅ WHAT'S PRODUCTION-GRADE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ Security architecture (three layers)
+✅ User ownership verification
+✅ Input validation (@Valid)
+✅ Clean architecture patterns
+✅ Dependency injection
+✅ JPA/Hibernate best practices
+✅ REST API design
+✅ Error handling with status codes
+
+🚀 COMMANDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Start application
+./mvnw spring-boot:run
+
+# Run tests
+./mvnw test
+
+# Build JAR
+./mvnw clean package
+
+# View dependencies
+./mvnw dependency:tree
+
+Remember: This is a museum, not production code. Learn the patterns!
+
+═══════════════════════════════════════════════════════════════════════════════
+Last Updated: 2025-01-18 | Version: 1.0 | Status: Complete Documentation
+═══════════════════════════════════════════════════════════════════════════════

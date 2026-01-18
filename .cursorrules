@@ -1,0 +1,8 @@
+{
+  "provider": "custom",
+  "customApiKey": "sk-93904291cb564d87a287c5a0f6a9ac38",
+  "customApiBase": "https://api.deepseek.com",
+  "apiVersion": "v1",
+  "model": "deepseek-chat",
+  "openaiCompatible": true
+}
