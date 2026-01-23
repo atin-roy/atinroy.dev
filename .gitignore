@@ -5,6 +5,7 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+.aider*
 
 # --- Node.js / Next.js (Frontend) ---
 node_modules/
