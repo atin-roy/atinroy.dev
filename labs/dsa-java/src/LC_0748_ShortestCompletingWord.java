@@ -35,7 +35,15 @@ public class LC_0748_ShortestCompletingWord {
             Arrays.sort(arr);
             String licensePlate = new String(arr);
 
-            int minLength = Integer.MAX_VALUE;
+            int min
+            ￼# Notes
+            *Short takeaway goes here...*
+            
+            ￼# Solution
+            ```python
+            
+            
+            ```Length = Integer.MAX_VALUE;
             String result = "";
             for (int i = 0; i < words.length; i++) {
                 arr = words[i].toCharArray();
