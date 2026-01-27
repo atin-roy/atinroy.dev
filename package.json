@@ -15,7 +15,7 @@
     "clean": "rm -rf node_modules apps/*/node_modules labs/**/node_modules apps/*/target labs/**/target"
   },
   "devDependencies": {
-    "prettier": "^3.8.0"
+    "prettier": "^3.8.1"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
